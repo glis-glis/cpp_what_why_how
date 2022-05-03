@@ -9,23 +9,38 @@
 (current-main-font "comfortaa")
 (current-code-font "Fantasque Sans Mono")
 (current-title-color "darkgreen")
-(current-gap-size 18)
-;(current-font-size 28)
+(current-gap-size 12)
+(current-font-size 28)
 
 (slide
  ;#:title "C++"
- (shadow-frame (t "Programming in C++"))
- 'next
+ (shadow-frame (text "Programming in C++" null 60))
  (hc-append (bt "Why") (t " and ") (bt "How")))
 
 (slide
- (colorize  (t "Compiled or Interpreted") "darkgreen")
- (blank 36)
- (colorize  (t "Programming paradigms") "darkgreen")
- (blank 36)
- 'alts(list
- (list (colorize  (t "Speed, Safety and Comfort") "darkgreen"))
- (list (colorize  (t "Speed, Safety or Comfort") "darkgreen"))))
+ ;#:title "C++"
+ (scale (bitmap "redmonk.png") 0.75))
+
+(slide
+ (hc-append
+  100
+  (frame (inset (table 2
+         (list
+          (t "1") (t "JavaScript")
+          (t "2") (t "Python")
+          (t "3") (t "Java")
+          (t "4") (t "PHP")
+          (t "5") (t "C#")
+          (t "6") (t "C++")
+          (t "7") (t "TypeScript")
+          (t "8") (t "Ruby")
+          (t "9") (t "C")
+          (t "10") (t "Swift"))
+         lc-superimpose
+         cc-superimpose
+         gap-size
+         8) gap-size))
+  (vc-append (item "test") (item "test2"))))
 
 (slide
  #:title "Interpreted languages"
