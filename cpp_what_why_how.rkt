@@ -274,12 +274,28 @@
  (pitem "Scales well in code- and team-size")
  (pitem "Modern Paradigms"))
 
+(slide
+ (shadow-frame (big (t "Live C++ example"))))
+
+(slide
+ (shadow-frame (big (t "C++ Tools")))
+ (para (bt "Compiler"))
+ (eitem "gcc, clang, VC++")
+ (pitem "Warnings are your friend")
+ (mitem "Template errors are unreadable")
+ (blank 12)
+ (para (bt "IDE"))
+ (item #:bullet (bt "🖰") "CLion, Eclipse, Visual Studio Code")
+ (item #:bullet (bt "🖮") "emacs, vim")
+ (pitem "Find files, grep in project")
+ (pitem "On the fly compile errors")
+ (pitem "Goto definition/declaration, find references")
+ (pitem "Code formation, auto-complete"))
 
 (slide
  (shadow-frame (big (t "C++ Ressources")))
  (para (tt "cppreference.com"))
  (para (tt "isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"))
- (para (tt "lefticus.gitbooks.io/cpp-best-practices"))
  (para (tt "godbolt.org"))
  (blank 24)
  (hc-append 10
@@ -288,19 +304,90 @@
   (scale-to-fit (bitmap "effective_modern.jpg") (/ client-w 3) (/ client-h 3))))
 
 (slide
- (shadow-frame (big (t "C++ Tools")))
- (para (bt "Compiler"))
- (eitem "gcc, clang, VC++")
- (pitem "Warnings are your friend")
- (mitem "Template errors are unreadable")
+ (shadow-frame (big (t "Rule of Zero")))
+ (para (bt "C.20: If you can avoid defining default operations, do"))
  (blank 24)
- (para (bt "IDE"))
- (eitem "CLion, Eclipse, Visual Studio Code, emacs, vim, ...")
- (pitem "On the fly compile errors")
- (pitem "Find files, grep in project")
- (pitem "Goto definition/declaration, find references")
- (pitem "Code formation")
- (pitem "Refactoring")
+ (para (frame (codeblock-pict
+               "#lang ecmascript
+class MyClass {
+    int _x;
+public:
+    MyClass(int x = 0) : _x(x) {}
+
+    constexpr int x() const noexcept {return _x;}
+
+    // implicitly creates:
+    // ~MyClass() = default;
+    // MyClass(const MyClass&) = default;
+    // MyClass& operator=(const MyClass&) = default;
+
+    // MyClass(MyClass&&) = default;
+    // MyClass& operator=(MyClass&&) = default;
+}"))))
+
+(slide
+ (shadow-frame (big (t "Rule of Five")))
+ (para (bt "C.21: If you define or =delete any copy, move, or destructor function,")
+(bt " define or =delete them all"))
+ (blank 24)
+ (para (frame (codeblock-pict
+"class MyClass {
+public:
+    std::vector<int> xs;
+    virtual ~MyClass() = default;
+
+    // implicitly creates:
+    // MyClass(const MyClass&) = default;
+    // MyClass& operator=(const MyClass&) = default;
+
+    // MyClass(MyClass&&) = delete;
+    // MyClass& operator=(MyClass&&) = delete;
+}
+std::vector<MyClass> mcs; // cannot use std::vector move constructor!"))))
+
+(slide
+ (shadow-frame (big (t "Rule of Five")))
+ (para (bt "C.21: If you define or =delete any copy, move, or destructor function,")
+(bt " define or =delete them all"))
+ (blank 24)
+ (para (frame (codeblock-pict
+"class MyClass {
+public:
+    std::vector<int> xs;
+    virtual ~MyClass() = default;
+
+    // do this:
+    MyClass(const MyClass&) = default;
+    MyClass& operator=(const MyClass&) = default;
+
+    MyClass& operator=(MyClass&&) = default;
+    MyClass(MyClass&&) = default;
+}
+std::vector<MyClass> mcs;// can use std::vector move constructor"))))
+
+(slide
+ (shadow-frame (big (t "Not Obvious to Implement")))
+ (item #:bullet (bt "C.121:") " If a base class is used as an interface, make it a pure abstract class")
+ (blank 24)
+
+ (item #:bullet (bt "C.129:")" When designing a class hierarchy, distinguish  between implementation inheritance and interface inheritance")
+ (blank 24)
+
+ (item #:bullet (bt "C.133:") " Avoid protected data"))
+
+(slide
+ (shadow-frame (big (t "Controversial")))
+ (item #:bullet (bt "C.4:") " Make a function a member only if it needs direct access to the representation of a class")
+ (blank 24)
+ (para (bt "Reason"))
+ (pitem "Less coupling than with member functions")
+ (pitem "fewer functions that can cause trouble by modifying object state")
+ (pitem "reduces the number of functions that needs to be modified after a change in representation.")
+ (blank 24)
+ (para (bt "Problem")
+ (mitem "How to know the function exists?")
+ (mitem "No auto-complete")
+       )
  )
 
 
@@ -314,8 +401,9 @@ int secretNumber = 3;
 if (secretNumber = myNumber) printSecretInformation();")))
  (blank 24)
  (para (bt "No buffer overflow check"))
- (para (frame (codeblock-pict
-"std::array<int, 4> a{1, 2, 3, 4};
+ (para (frame (codeblock-pict #:keep-lang-line? #f
+               "#lang ecmascript
+std::array<int, 4> a{1, 2, 3, 4};
 a[4] = 10;
 for (size_t i = 3; i >= 0; --i) doReverse(a[i]);")))
  (blank 24)
@@ -452,3 +540,39 @@ MyClass mc; // assuming no heap-allocated member variable")))
 v.push_back(5.);
 auto unique = std::make_unique<MyClass>();
 auto shared = std::make_shared<MyClass>();"))))
+
+(slide
+ (shadow-frame (big (t "Branching")))
+ (scale-to-fit (bitmap "pipeline.png") client-w (/ client-h 1.5)))
+
+
+(slide
+ (shadow-frame (big (t "Branching")))
+ (para (frame (codeblock-pict
+               "for (auto other = Base::min; other < Base::max; ++other) {
+    if (other == base.base)
+        baseLikelihoods[other] = eps.complement();
+    else
+        baseLikelihoods[other] = (1. / 3) * eps;
+}"))))
+
+(slide
+ (shadow-frame (big (t "Branching")))
+ (para (frame (codeblock-pict
+               "for (auto other = Base::min; other < Base::max; ++other) {
+    baseLikelihoods[other] = (1. / 3) * eps;
+}
+baseLikelihoods[base.base] = eps.complement();"))))
+
+(slide
+ (shadow-frame (big (t "Performance Considerations")))
+ (pitem "Measure!")
+ (pitem "Know the cost of algorithms")
+ (blank 24)
+ (mitem "Do not micro-optimize")
+ (pitem "Trust the compiler")
+ (blank 24)
+ (pitem "Avoid heap-allocations")
+ (pitem "Avoid indirections")
+ (pitem "Avoid branching")
+ (pitem "Pre-calculate often-used values"))
