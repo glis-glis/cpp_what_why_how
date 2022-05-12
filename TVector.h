@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-inline double dist(double x, double y) {
+inline double dist(double x, double y) noexcept {
 	return std::sqrt(x*x + y*y);
 }
 
