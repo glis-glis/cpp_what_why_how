@@ -246,7 +246,7 @@
         (mitem "Mostly a sales pitch")
         (blank 24)
         (pitem "Different memory and overflow strategies")
-        (mitem "Default ist manual")
+        (mitem "Default is manual")
         )))
 
 (slide
@@ -255,7 +255,7 @@
  (blank 24)
  (para (emph "Use two languages"))
  (aitem "Python/R/Lua/Scheme for convenience")
- (aitem "Rewrite slowest part in C/C++/FORTRAN")
+ (aitem "Rewrite the slowest part in C/C++/FORTRAN")
  (aitem "numpy, PyTorch, TensorFlow, LAMMPS, pyRosetta")
  (blank 24)
  (para (emph "Solving the \"Two-language problem\""))
@@ -293,7 +293,7 @@
  (pitem "Code formation, auto-complete"))
 
 (slide
- (shadow-frame (big (t "C++ Ressources")))
+ (shadow-frame (big (t "C++ Resources")))
  (para (tt "cppreference.com"))
  (para (tt "isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"))
  (para (tt "godbolt.org"))
@@ -308,8 +308,7 @@
  (para (bt "C.20: If you can avoid defining default operations, do"))
  (blank 24)
  (para (frame (codeblock-pict
-               "#lang ecmascript
-class MyClass {
+               "class MyClass {
     int _x;
 public:
     MyClass(int x = 0) : _x(x) {}
@@ -367,17 +366,17 @@ std::vector<MyClass> mcs;// can use std::vector move constructor"))))
 
 (slide
  (shadow-frame (big (t "Not Obvious to Implement")))
- (item #:bullet (bt "C.121:") " If a base class is used as an interface, make it a pure abstract class")
+ (item #:bullet (bt "C.121:") "If a base class is used as an interface, make it a pure abstract class")
  (blank 24)
 
- (item #:bullet (bt "C.129:")" When designing a class hierarchy, distinguish  between implementation inheritance and interface inheritance")
+ (item #:bullet (bt "C.129:")"When designing a class hierarchy, distinguish  between implementation inheritance and interface inheritance")
  (blank 24)
 
- (item #:bullet (bt "C.133:") " Avoid protected data"))
+ (item #:bullet (bt "C.133:") "Avoid protected data"))
 
 (slide
- (shadow-frame (big (t "Controversial")))
- (item #:bullet (bt "C.4:") " Make a function a member only if it needs direct access to the representation of a class")
+ (shadow-frame (big (t "Controversial?")))
+ (item #:bullet (bt "C.4:") "Make a function a member only if it needs direct access to the representation of a class")
  (blank 24)
  (para (bt "Reason"))
  (pitem "Less coupling than with member functions")
@@ -573,6 +572,6 @@ baseLikelihoods[base.base] = eps.complement();"))))
  (pitem "Trust the compiler")
  (blank 24)
  (pitem "Avoid heap-allocations")
- (pitem "Avoid indirections")
+ (pitem "Avoid indirection")
  (pitem "Avoid branching")
  (pitem "Pre-calculate often-used values"))
