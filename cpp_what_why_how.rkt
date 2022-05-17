@@ -30,16 +30,21 @@
 (current-title-color "darkgreen")
 (current-gap-size 12)
 (current-font-size 28)
+(current-comment-color (current-id-color)) 
 
 (slide
  ;#:title "C++"
+ #:name "Programming in C++"
  (shadow-frame (big (t "Programming in C++")))
  (hc-append (bt "Why") (t " and ") (bt "How")))
 
 (slide
  ;#:title "C++"
+ #:name "redmonk"
  (scale-to-fit (bitmap "redmonk.png") client-w client-h))
+
 (slide
+ #:name "Top 10 Programming Languages"
  (shadow-frame (big (t "Top 10 Programming Languages")))
  (hc-append
   100
@@ -75,6 +80,7 @@
               ))))
 
 (slide
+ #:name "Interpreted"
  (shadow-frame (big (t "Top 10 Programming Languages")))
  (hc-append
   100
@@ -110,6 +116,7 @@
         )))
 
 (slide
+ #:name "VM"
  (shadow-frame (big (t "Top 10 Programming Languages")))
  (hc-append
   100
@@ -145,6 +152,7 @@
         )))
 
 (slide
+ #:name "Procedural"
  (shadow-frame (big (t "Top 10 Programming Languages")))
  (hc-append
   100
@@ -180,6 +188,7 @@
         )))
 
 (slide
+ #:name "Modern Systems"
  (shadow-frame (big (t "Top 10 Programming Languages")))
  (hc-append
   100
@@ -215,6 +224,7 @@
         )))
 
 (slide
+ #:name "Legacy Systems"
  (shadow-frame (big (t "Top 10 Programming Languages")))
  (hc-append
   100
@@ -250,6 +260,7 @@
         )))
 
 (slide
+ #:name "Future"
  (shadow-frame (big (t "Future")))
  (para (it "It's difficult to make predictions, especially about the future"))
  (blank 24)
@@ -265,6 +276,7 @@
  (eitem "Julia, PyPy, luaJIT"))
 
 (slide
+ #:name "Why C++"
  (shadow-frame (big (t "Why C++")))
  (para "Runtime Speed" (colorize (tt "≫") "darkred") "Development Speed")
  (para "Runtime Speed" (colorize (tt "≈") "darkred") "Safety")
@@ -275,27 +287,29 @@
  (pitem "Modern Paradigms"))
 
 (slide
- (shadow-frame (big (t "Live C++ example"))))
+ #:name "Live C++ Example"
+ (shadow-frame (big (t "Live C++ Example"))))
 
 (slide
+ #:name "C++ Tools"
  (shadow-frame (big (t "C++ Tools")))
- (para (bt "Compiler"))
+ (para (emph "Compiler"))
  (eitem "gcc, clang, VC++")
- (pitem "Warnings are your friend")
- (mitem "Template errors are unreadable")
+ (pitem "Warnings are your friends")
+ (blank 24)
+ (para (emph "IDE"))
+ (item #:bullet (tt "🖰") "CLion, Eclipse, Visual Studio Code")
+ (item #:bullet (tt "⌨") "emacs, vim")
  (blank 12)
- (para (bt "IDE"))
- (item #:bullet (bt "🖰") "CLion, Eclipse, Visual Studio Code")
- (item #:bullet (bt "🖮") "emacs, vim")
  (pitem "Find files, grep in project")
  (pitem "On the fly compile errors")
  (pitem "Goto definition/declaration, find references")
  (pitem "Code formation, auto-complete"))
 
 (slide
+ #:name "C++ Ressources"
  (shadow-frame (big (t "C++ Resources")))
  (para (tt "cppreference.com"))
- (para (tt "isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"))
  (para (tt "godbolt.org"))
  (blank 24)
  (hc-append 10
@@ -304,8 +318,32 @@
   (scale-to-fit (bitmap "effective_modern.jpg") (/ client-w 3) (/ client-h 3))))
 
 (slide
+ #:name "C++ Talks"
+ (shadow-frame (big (t "C++ Talks")))
+ (para (tt "https://www.youtube.com/user/CppCon"))
+ (para (tt "https://www.youtube.com/c/NDCConferences"))
+ (blank 24)
+ (para (emph "Philosophy:") "Bjarne Stroustrup, Herb Sutter")
+ (para (emph "Basics:") "Scott Meyers, Jason Turner, Kate Gregory")
+ (para (emph "Advanced:") "Andrei Alexandrescu, Chandler Carruth"))
+
+
+(slide
+ #:name "Core Guidelines"
+ (shadow-frame (big (t "C++ Core Guidelines")))
+ (para "Initiated by Bjarne Stroustrup and Herb Sutter")
+ (para (tt "isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"))
+ (blank 24)
+ (para (emph "Aims"))
+ (pitem "Less error-prone and more maintainable")
+ (pitem "Faster/easier initial development")
+ (pitem "Zero-overhead principle")
+ (pitem "Guidelines, not rules"))
+
+(slide
+ #:name "Rule of Zero"
  (shadow-frame (big (t "Rule of Zero")))
- (para (bt "C.20: If you can avoid defining default operations, do"))
+ (para (emph "C.20:") " If you can avoid defining default operations, do")
  (blank 24)
  (para (frame (codeblock-pict
                "class MyClass {
@@ -325,9 +363,9 @@ public:
 }"))))
 
 (slide
+ #:name "Rule of Five"
  (shadow-frame (big (t "Rule of Five")))
- (para (bt "C.21: If you define or =delete any copy, move, or destructor function,")
-(bt " define or =delete them all"))
+ (para (emph "C.21:") " If you define or =delete any copy, move, or destructor function, define or =delete them all")
  (blank 24)
  (para (frame (codeblock-pict
 "class MyClass {
@@ -346,8 +384,7 @@ std::vector<MyClass> mcs; // cannot use std::vector move constructor!"))))
 
 (slide
  (shadow-frame (big (t "Rule of Five")))
- (para (bt "C.21: If you define or =delete any copy, move, or destructor function,")
-(bt " define or =delete them all"))
+ (para (emph "C.21:") " If you define or =delete any copy, move, or destructor function, define or =delete them all")
  (blank 24)
  (para (frame (codeblock-pict
 "class MyClass {
@@ -365,32 +402,36 @@ public:
 std::vector<MyClass> mcs;// can use std::vector move constructor"))))
 
 (slide
- (shadow-frame (big (t "Not Obvious to Implement")))
- (item #:bullet (bt "C.121:") "If a base class is used as an interface, make it a pure abstract class")
+ #:name "Interface or Re-Use?"
+ (shadow-frame (big (t "Interface or Re-Use?")))
+ (item #:bullet (emph "C.121:") "If a base class is used as an interface, make it a pure abstract class")
  (blank 24)
 
- (item #:bullet (bt "C.129:")"When designing a class hierarchy, distinguish  between implementation inheritance and interface inheritance")
+ (item #:bullet (emph "C.129:")"When designing a class hierarchy, distinguish  between implementation inheritance and interface inheritance")
  (blank 24)
 
- (item #:bullet (bt "C.133:") "Avoid protected data"))
+ (item #:bullet (emph "C.133:") "Avoid protected data"))
 
 (slide
+ #:name "Controversial?"
  (shadow-frame (big (t "Controversial?")))
- (item #:bullet (bt "C.4:") "Make a function a member only if it needs direct access to the representation of a class")
+ (item #:bullet (emph "C.4:") "Make a function a member only if it needs direct access to the representation of a class")
  (blank 24)
- (para (bt "Reason"))
+ (para (emph "Reason"))
  (pitem "Less coupling than with member functions")
- (pitem "fewer functions that can cause trouble by modifying object state")
- (pitem "reduces the number of functions that needs to be modified after a change in representation.")
+ (pitem "Fewer functions that can cause trouble by modifying object state")
+ (pitem "Reduces the number of functions that needs to be modified after a change in representation")
  (blank 24)
- (para (bt "Problem")
+ (para (emph "Problem")
  (mitem "How to know the function exists?")
- (mitem "No auto-complete")
-       )
- )
-
+ (mitem "No auto-complete")))
 
 (slide
+ #:name "The C++ Defaults are Wrong"
+ (shadow-frame (big (t "The C++ Defaults are Wrong"))))
+
+(slide
+ #:name "Default variables are unsafe"
  (shadow-frame (big (t "Default variables are unsafe")))
  (para (bt "Variables are mutable"))
  (para (frame (codeblock-pict
@@ -412,7 +453,8 @@ for (size_t i = 3; i >= 0; --i) doReverse(a[i]);")))
 delete p;
 p->getName();"))))
 
- (slide
+(slide
+ #:name "Safe Variables"
  (shadow-frame (big (t "Safe Variables")))
  (para (bt "Declare variables") (tt "const/constexpr"))
  (para (frame (codeblock-pict
@@ -432,7 +474,8 @@ std::for_each(a.crbegin(), a.crend(),
 "auto p = std::make_unique<MyClass>;
 p->getName();"))))
 
-(slide
+(slide 
+ #:name "Safe Variables"
  (shadow-frame (big (t "Safe Variables")))
  (para (bt "Declare variables") (tt "const/constexpr"))
  (para (frame (codeblock-pict
@@ -453,6 +496,7 @@ std::for_each(a.crbegin(), a.crend(),
 p->getName();"))))
 
 (slide
+ #:name "Default functions are unsafe"
  (shadow-frame (big (t "Default functions are unsafe")))
  (para (bt "Functions do mutations"))
  (para (bt "Functions may throw"))
@@ -470,11 +514,13 @@ int square(MyClass& mc) {
 }"))))
 
 (slide
+ #:name "Function attributes"
  (shadow-frame (big (t "Function attributes")))
- (para (tt "const") " member-function and references")
- (para (tt "constexpr") " (member-) function")
- (para (tt "noexcept") " (member-) function")
+ (para (colorize (tt "const") (current-id-color)) " member-function and references")
+ (para (colorize (tt "constexpr") (current-id-color)) " (member-) function")
+ (para (colorize (tt "noexcept") (current-id-color)) " (member-) function")
  (blank 24)
+ ;(code-colorize-enabled #f)
  (para (frame (codeblock-pict
 "class MyClass {
     int _x;
@@ -487,18 +533,19 @@ constexpr int square(const MyClass& mc) noexcept {
 }"))))
 
 (slide
+ #:name "Safe C++"
  (shadow-frame (big (t "Safe C++")))
- (pitem "Make variables const(expr)")
- (pitem "Make functions constexpr")
- (pitem "Make member-functions const(expr)")
+ (pitem "Declare variables const(expr)")
+ (pitem "Declare (member-)functions const(expr)")
  (blank 24)
  (pitem "Use algorithms, not raw loops")
  (pitem "Use smart pointers, not raw pointers")
  (blank 24)
- (pitem "Use modern C++ features")
+ (aitem "Use modern C++ features")
  )
 
 (slide
+ #:name "The Cost of Instructions"
  (shadow-frame (big (t "The Cost of Instructions")))
 (frame (inset (table 2
                        (list
@@ -521,8 +568,9 @@ constexpr int square(const MyClass& mc) noexcept {
  )
 
 (slide
+ #:name "Stack and Heap"
  (shadow-frame (big (t "Stack and Heap")))
- (para (bt "Stack memory is basically for free"))
+ (para (emph "Stack memory is basically for free"))
  (pitem "Size known at compile-time")
  (pitem "On register or L1 cache")
  (para (frame (codeblock-pict
@@ -531,7 +579,7 @@ constexpr size_t s = 100; // even cheaper
 std::array<double, s> a;
 MyClass mc; // assuming no heap-allocated member variable")))
  (blank 24)
- (para (bt "Heap memory is expensive"))
+ (para (emph "Heap memory is expensive"))
  (mitem "Size unknown at compile-time")
  (mitem "Could be on RAM (cache-miss)")
  (para (frame (codeblock-pict
@@ -541,11 +589,13 @@ auto unique = std::make_unique<MyClass>();
 auto shared = std::make_shared<MyClass>();"))))
 
 (slide
- (shadow-frame (big (t "Branching")))
+ #:name "Pipeline"
+ (shadow-frame (big (t "Pipeline")))
  (scale-to-fit (bitmap "pipeline.png") client-w (/ client-h 1.5)))
 
 
 (slide
+ #:name "Branching"
  (shadow-frame (big (t "Branching")))
  (para (frame (codeblock-pict
                "for (auto other = Base::min; other < Base::max; ++other) {
@@ -564,6 +614,7 @@ auto shared = std::make_shared<MyClass>();"))))
 baseLikelihoods[base.base] = eps.complement();"))))
 
 (slide
+ #:name "Performance Considerations"
  (shadow-frame (big (t "Performance Considerations")))
  (pitem "Measure!")
  (pitem "Know the cost of algorithms")
@@ -575,3 +626,20 @@ baseLikelihoods[base.base] = eps.complement();"))))
  (pitem "Avoid indirection")
  (pitem "Avoid branching")
  (pitem "Pre-calculate often-used values"))
+
+(slide
+ #:name "Programming in C++"
+ (shadow-frame (big (t "Programming in C++")))
+ (para (emph "Why"))
+ (pitem "Old language, new features")
+ (pitem "High performance code")
+ (pitem "Reusable code")
+ (blank 24)
+ (para (emph "How"))
+ (pitem "Use available tools and ressources")
+ (pitem "Safety through modern features")
+ (pitem "Be aware of performance costs"))
+
+(slide
+ #:name "Compiling"
+ (scale-to-fit (bitmap "compiling.png") client-w (/ client-h 1.5)))
