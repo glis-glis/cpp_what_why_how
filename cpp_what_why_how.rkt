@@ -36,7 +36,10 @@
  ;#:title "C++"
  #:name "Programming in C++"
  (shadow-frame (big (t "Programming in C++")))
- (hc-append (bt "Why") (t " and ") (bt "How")))
+ (hc-append (bt "Why") (t " and ") (bt "How"))
+ (blank 50)
+(emph "Andreas Füglistaler")
+ )
 
 (slide
  ;#:title "C++"
@@ -365,7 +368,7 @@ public:
 (slide
  #:name "Rule of Five"
  (shadow-frame (big (t "Rule of Five")))
- (para (emph "C.21:") " If you define or =delete any copy, move, or destructor function, define or =delete them all")
+ (para (emph "C.21:") " If you define, " (tt "=default") " or " (tt "=delete") "any copy, move, or destructor function, define, " (tt "=default") " or " (tt "=delete") "them all")
  (blank 24)
  (para (frame (codeblock-pict
 "class MyClass {
@@ -383,8 +386,9 @@ public:
 std::vector<MyClass> mcs; // cannot use std::vector move constructor!"))))
 
 (slide
+ #:name "Rule of Five"
  (shadow-frame (big (t "Rule of Five")))
- (para (emph "C.21:") " If you define or =delete any copy, move, or destructor function, define or =delete them all")
+ (para (emph "C.21:") " If you define, " (tt "=default") " or " (tt "=delete") "any copy, move, or destructor function, define, " (tt "=default") " or " (tt "=delete") "them all")
  (blank 24)
  (para (frame (codeblock-pict
 "class MyClass {
@@ -467,7 +471,7 @@ if (secretNumber = myNumber) printSecretInformation();")))
 "std::array<int, 4> a{1, 2, 3, 4};
 a.back() = 10;
 std::for_each(a.crbegin(), a.crend(), 
-    [](auto ai) {doReverse(ai);}")))
+    [](const auto ai) {doReverse(ai);}")))
  (blank 24)
  (para (bt "Use smart pointers"))
  (para (frame (codeblock-pict
@@ -488,7 +492,7 @@ if (secretNumber == myNumber) printSecretInformation();")))
 "std::array<int, 4> a{1, 2, 3, 4};
 a.back() = 10;
 std::for_each(a.crbegin(), a.crend(), 
-    [](auto ai) {doReverse(ai);}")))
+    [](const auto ai) {doReverse(ai);}")))
  (blank 24)
  (para (bt "Use smart pointers"))
  (para (frame (codeblock-pict
@@ -589,8 +593,8 @@ auto unique = std::make_unique<MyClass>();
 auto shared = std::make_shared<MyClass>();"))))
 
 (slide
- #:name "Pipeline"
- (shadow-frame (big (t "Pipeline")))
+ #:name "Processor Pipeline"
+ (shadow-frame (big (t "Processor Pipeline")))
  (scale-to-fit (bitmap "pipeline.png") client-w (/ client-h 1.5)))
 
 
