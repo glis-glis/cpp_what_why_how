@@ -71,14 +71,10 @@
  (pitem ""))
 
 
-(slide
- #:name "C++ Defaults are Unsafe"
- (shadow-frame (big (t "C++ Defaults are Unsafe")))
- (scale-to-fit (bitmap "bad_alloc.png") client-w (/ client-h 1.5)))
 
 (slide
- #:name "Default variables are unsafe"
- (shadow-frame (big (t "Default variables are unsafe")))
+ #:name "Variables are unsafe by default"
+ (shadow-frame (big (t "Variables are unsafe by default")))
  (table 3
         (list
          (bt "Variables are mutable") (ghost (arrow gap-size 0)) (ghost(t "declare const/constexpr"))
@@ -92,7 +88,7 @@
 
 (slide
  #:name "Make variables safe"
- (shadow-frame (big (t "Default variables are unsafe")))
+ (shadow-frame (big (t "Make variables safe")))
  (table 3
         (list
          (bt "Variables are mutable") (arrow gap-size 0) (t "declare const/constexpr")
@@ -104,26 +100,26 @@
         8))
 
 (slide
- #:name "Default functions are unsafe"
- (shadow-frame (big (t "Default variables are unsafe/impractical")))
+ #:name "Functions are unsafe by default"
+ (shadow-frame (big (t "Functions are unsafe by default")))
  (table 3
         (list
          (bt "Functions mutate arguments") (ghost (arrow gap-size 0)) (ghost (t "const references"))
          (bt "Member-functions mutate members") (ghost (arrow gap-size 0)) (ghost (t "const"))
-         (bt "Functions ony run-time") (ghost (arrow gap-size 0)) (ghost (t "constexpr")))
+         (bt "Functions evaluate at run-time") (ghost (arrow gap-size 0)) (ghost (t "constexpr")))
         lc-superimpose
         cc-superimpose
         gap-size
         8))
 
 (slide
- #:name "Default functions are unsafe"
- (shadow-frame (big (t "Default variables are unsafe/impractical")))
+ #:name "Make variables safe"
+ (shadow-frame (big (t "Make variables safe")))
  (table 3
         (list
          (bt "Functions mutate arguments") (arrow gap-size 0) (t "const references")
          (bt "Member-functions mutate members") (arrow gap-size 0) (t "const")
-         (bt "Functions ony run-time") (arrow gap-size 0) (t "constexpr"))
+         (bt "Functions evaluate at run-time") (arrow gap-size 0) (t "constexpr"))
         lc-superimpose
         cc-superimpose
         gap-size
@@ -133,13 +129,19 @@
 (slide
  #:name "Safe C++"
  (shadow-frame (big (t "Safe C++")))
- (pitem "Declare variables const(expr)")
- (pitem "Declare (member-)functions const(expr)")
+ (pitem "Declare variables as const")
+ (pitem "Declare member-functions as const")
+ (pitem "Declare functions as constexpr (if possible)")
  (blank 24)
  (pitem "Use algorithms, not raw loops")
+ (pitem "Use objects, not pointers")
  (pitem "Use smart pointers, not raw pointers")
  (blank 24)
  (para (colorize (t "✔") "darkgreen") (emph "Use modern C++ features")))
+
+(slide
+ #:name "C++ Defaults are Unsafe"
+ (scale-to-fit (bitmap "bad_alloc.png") client-w (/ client-h 1.5)))
 
 
 (slide
@@ -171,10 +173,11 @@ a[3] = 3;")))
 (blank 24)
  (pitem "Do this:")
 (para (frame (codeblock-pict
-              "std::array<int, 4> a;
-for (size_t i = 0; i < a.size(); ++i) a[i] = i;
-// even better:
-std::iota(a.begin(), a.end(), 0));")))
+              "for (size_t i = 0; i < a.size(); ++i) a[i] = i;")))
+
+ (pitem "Even better:")
+(para (frame (codeblock-pict
+              "std::iota(a.begin(), a.end(), 0));")))
 
 (blank 24)
 
@@ -198,10 +201,10 @@ std::iota(a.begin(), a.end(), 0));")))
                         (tt "size_t / size_t") (t "59 cycle")
                         (tt "size_t % size_t") (t "60 cycle")
                         (t "") (t "")
-                        (t "Read Register [~1kB]") (t "1 cycle")
-                        (t "Read L1 cache [96kB]") (t "5 cycles")
-                        (t "Read L2 cache [1.2MB]") (t "10 cycles")
-                        (t "Read L3 cache [12MB]") (t "55 cycles")
+                        (t "Read Register [~1kB]") (t "0 cycle")
+                        (t "Read L1 cache [192kB]") (t "5 cycles")
+                        (t "Read L2 cache [5MB]") (t "10 cycles")
+                        (t "Read L3 cache [12MB]") (t "50 cycles")
                         (t "Read RAM [32GB]") (t "200 cycles"))
                        lc-superimpose
                        cc-superimpose
@@ -217,8 +220,7 @@ std::iota(a.begin(), a.end(), 0));")))
  (pitem "On register or L1 cache")
  (para (frame (codeblock-pict
                "double x = 4;
-constexpr size_t s = 100;
-std::array<double, s> a;
+std::array<double, 1024> a;
 MyClass mc; // assuming no heap-allocated member variable")))
  (blank 24)
  (para (emph "Heap memory is expensive"))
@@ -271,9 +273,7 @@ a[index2d(3, 4)] = 5.;"))))
  (blank 24)
  (pitem "No branching")
  (para (frame (codeblock-pict
-               "for (auto other = Base::min; other < Base::max; ++other) {
-    baseLikelihoods[other] = (1. / 3) * eps;
-}
+               "baseLikelihoods.fill((1./3) * eps);
 baseLikelihoods[base.base] = eps.complement();"))))
 (current-comment-color ccc) 
 
@@ -283,13 +283,15 @@ baseLikelihoods[base.base] = eps.complement();"))))
  (pitem "Measure!")
  (blank 24)
  (mitem "Do not micro-optimize")
- (pitem "Less code == Faster code")
+ (pitem "Less code ➔ Faster code")
  (blank 24)
  (pitem "Avoid heap-allocations")
  (pitem "Avoid indirection")
- (pitem "Avoid branching")
- (blank 24)
- (pitem "Pre-calculate often-used values"))
+ (pitem "Avoid branching"))
+
+(slide
+ #:name "C++ Defaults are Unsafe"
+ (bitmap "efficiency.png") )
 
 (slide
  #:name "Core Guidelines"
