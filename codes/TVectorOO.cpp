@@ -86,6 +86,8 @@ void translate(TVectorOO& V, double X, double Y) {
 	V.set(V.x() + X, V.y() + Y);
 }
 
+void printSecretInformation();
+
 int main() {
 	TVectorOO voo;
 	translate(voo, 3., 4.);
@@ -108,4 +110,11 @@ int main() {
 	}
 
 	return 0;
+
+	int myNumber;
+	std::cin >> myNumber;
+	int secretNumber = 3;
+	if (secretNumber = myNumber) printSecretInformation();
 }
+
+

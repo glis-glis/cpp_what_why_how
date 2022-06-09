@@ -8,9 +8,19 @@
 (require slideshow/code)
 (require pict/shadow)
 (require slideshow/text)
+(require (planet jaymccarthy/c:1:2))
 
 (define (tt str)
   (text str (current-code-font) (current-font-size)))
+
+(define (c++ str)
+  (colorize (tt str) (current-base-color)))
+
+(define (kw str)
+  (colorize (tt str) (current-keyword-color)))
+
+(define (// str)
+  (colorize (tt str) (current-comment-color)))
 
 (define (emph str)
   (colorize (bt str) "blue"))
@@ -35,7 +45,7 @@
 (current-title-color "darkgreen")
 (current-gap-size 12)
 (current-font-size 28)
-(current-comment-color (current-id-color)) 
+;(current-comment-color (current-id-color)) 
 
 (slide
  ;#:title "C++"
@@ -69,104 +79,56 @@
 (slide
  #:name "Default variables are unsafe"
  (shadow-frame (big (t "Default variables are unsafe")))
- (para (bt "Variables are mutable"))
- (para (frame (codeblock-pict
-"int myNumber;
-std::cin >> myNumber;
-int secretNumber = 3;
-if (secretNumber = myNumber) printSecretInformation();")))
- (blank 24)
- (para (bt "No buffer overflow check"))
- (para (frame (codeblock-pict #:keep-lang-line? #f
-               "#lang ecmascript
-std::array<int, 4> a{1, 2, 3, 4};
-a[4] = 10;
-for (size_t i = 3; i >= 0; --i) doReverse(a[i]);")))
- (blank 24)
- (para (bt "No memory check"))
- (para (frame (codeblock-pict
-"MyClass* p = new MyClass;
-delete p;
-p->getName();"))))
+ (table 3
+        (list
+         (bt "Variables are mutable") (ghost (arrow gap-size 0)) (ghost(t "declare const/constexpr"))
+         (bt "No buffer overflow check") (ghost (arrow gap-size 0)) (ghost(t "use algorithm"))
+         (bt "No memory check") (ghost (arrow gap-size 0)) (ghost(t "use smart pointers")))
+        lc-superimpose
+        cc-superimpose
+        gap-size
+        8))
+
 
 (slide
- #:name "Safe Variables"
- (shadow-frame (big (t "Safe Variables")))
- (para (bt "Declare variables") (tt "const/constexpr"))
- (para (frame (codeblock-pict
-"const int myNumber = readNumber();
-constexpr int secretNumber = 3;
-if (secretNumber = myNumber) printSecretInformation();")))
- (blank 24)
- (para (bt "Use algorithms or range-based for-loops"))
- (para (frame (codeblock-pict
-"std::array<int, 4> a{1, 2, 3, 4};
-a.back() = 10;
-std::for_each(a.crbegin(), a.crend(), 
-    [](const auto ai) {doReverse(ai);}")))
- (blank 24)
- (para (bt "Use smart pointers"))
- (para (frame (codeblock-pict
-"auto p = std::make_unique<MyClass>;
-p->getName();"))))
-
-(slide 
- #:name "Safe Variables"
- (shadow-frame (big (t "Safe Variables")))
- (para (bt "Declare variables") (tt "const/constexpr"))
- (para (frame (codeblock-pict
-"const int myNumber = readNumber();
-constexpr int secretNumber = 3;
-if (secretNumber == myNumber) printSecretInformation();")))
- (blank 24)
- (para (bt "Use algorithms or range-based for-loops"))
- (para (frame (codeblock-pict
-"std::array<int, 4> a{1, 2, 3, 4};
-a.back() = 10;
-std::for_each(a.crbegin(), a.crend(), 
-    [](const auto ai) {doReverse(ai);}")))
- (blank 24)
- (para (bt "Use smart pointers"))
- (para (frame (codeblock-pict
-"auto p = std::make_unique<MyClass>;
-p->getName();"))))
+ #:name "Make variables safe"
+ (shadow-frame (big (t "Default variables are unsafe")))
+ (table 3
+        (list
+         (bt "Variables are mutable") (arrow gap-size 0) (t "declare const/constexpr")
+         (bt "No buffer overflow check") (arrow gap-size 0) (t "use algorithm")
+         (bt "No memory check") (arrow gap-size 0) (t "use smart pointers"))
+        lc-superimpose
+        cc-superimpose
+        gap-size
+        8))
 
 (slide
  #:name "Default functions are unsafe"
- (shadow-frame (big (t "Default functions are unsafe")))
- (para (bt "Functions do mutations"))
- (para (bt "Functions may throw"))
- (para (bt "Functions cannot be evaluated at compile-time"))
- (blank 24)
- (para (frame (codeblock-pict
-"class MyClass {
-    int _x;
-public:
-    int getXplus1() {return ++_x;}
-};
-
-int square(MyClass& mc) {
-    return mc.getXplus1() * mc.getXplus1();
-}"))))
+ (shadow-frame (big (t "Default variables are unsafe/impractical")))
+ (table 3
+        (list
+         (bt "Functions mutate arguments") (ghost (arrow gap-size 0)) (ghost (t "const references"))
+         (bt "Member-functions mutate members") (ghost (arrow gap-size 0)) (ghost (t "const"))
+         (bt "Functions ony run-time") (ghost (arrow gap-size 0)) (ghost (t "constexpr")))
+        lc-superimpose
+        cc-superimpose
+        gap-size
+        8))
 
 (slide
- #:name "Function attributes"
- (shadow-frame (big (t "Function attributes")))
- (para (colorize (tt "const") (current-id-color)) " member-function and references")
- (para (colorize (tt "constexpr") (current-id-color)) " (member-) function")
- (para "(" (colorize (tt "noexcept") (current-id-color)) " (member-) function)")
- (blank 24)
- ;(code-colorize-enabled #f)
- (para (frame (codeblock-pict
-"class MyClass {
-    int _x;
-public:
-    constexpr int getXplus1() const noexcept {return _x + 1;}
-};
+ #:name "Default functions are unsafe"
+ (shadow-frame (big (t "Default variables are unsafe/impractical")))
+ (table 3
+        (list
+         (bt "Functions mutate arguments") (arrow gap-size 0) (t "const references")
+         (bt "Member-functions mutate members") (arrow gap-size 0) (t "const")
+         (bt "Functions ony run-time") (arrow gap-size 0) (t "constexpr"))
+        lc-superimpose
+        cc-superimpose
+        gap-size
+        8))
 
-constexpr int square(const MyClass& mc) noexcept {
-    return mc.getXplus1() * mc.getXplus1();
-}"))))
 
 (slide
  #:name "Safe C++"
@@ -192,6 +154,8 @@ constexpr int square(const MyClass& mc) noexcept {
  (italic (para "In established engineering disciplines a 12% improvement, easily obtained, is never considered marginal; and I believe the same viewpoint should prevail in software engineering."))
 (para "(Donald Knuth)"))
 
+(define ccc (current-comment-color))
+(current-comment-color (current-id-color)) 
 (slide
  #:name "No Micro-Optimization"
  (shadow-frame (big (t "No Micro-Optimization")))
@@ -208,7 +172,7 @@ a[3] = 3;")))
  (pitem "Do this:")
 (para (frame (codeblock-pict
               "std::array<int, 4> a;
-for (size_t i = 0; i < a.size(); ++i) a[i] = 0;
+for (size_t i = 0; i < a.size(); ++i) a[i] = i;
 // even better:
 std::iota(a.begin(), a.end(), 0));")))
 
@@ -220,6 +184,7 @@ std::iota(a.begin(), a.end(), 0));")))
  #:name "Computer Memory"
  (shadow-frame (big (t "Computer Memory")))
  (scale-to-fit (bitmap "Cache_Hierarchy_Updated.png" ) client-w (/ client-h 1.5)))
+(current-comment-color ccc)
 
 (slide
  #:name "The Cost of Instructions"
@@ -290,6 +255,7 @@ a[index2d(3, 4)] = 5.;"))))
  (scale-to-fit (bitmap "pipeline.png") client-w (/ client-h 1.5)))
 
 
+(current-comment-color (current-id-color)) 
 (slide
  #:name "Branching"
  (shadow-frame (big (t "Branching")))
@@ -309,6 +275,7 @@ a[index2d(3, 4)] = 5.;"))))
     baseLikelihoods[other] = (1. / 3) * eps;
 }
 baseLikelihoods[base.base] = eps.complement();"))))
+(current-comment-color ccc) 
 
 (slide
  #:name "Performance Considerations"
