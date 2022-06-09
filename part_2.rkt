@@ -316,7 +316,7 @@ baseLikelihoods[base.base] = eps.complement();"))))
 public:
     MyClass(int x = 0) : _x(x) {}
 
-    constexpr int x() const noexcept {return _x;}
+    int x() const {return _x;}
 
     // implicitly creates:
     // ~MyClass() = default;
