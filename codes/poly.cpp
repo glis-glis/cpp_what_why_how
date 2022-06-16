@@ -77,10 +77,15 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	std::cout << "Will use the folowing polynomial function of order " << as.size() - 1 << '\n';
-	std::cout << "f(x) = " << as.front();
+	std::cout << "    f(x) = " << as.front();
 	for (size_t i = 1; i < as.size(); ++i) { std::cout << " + " << as[i] << "x^" << i; }
-	std::cout << '\n';
+	std::cout << "\ndf/dx(x) = ";
+	if (as.size() <= 1) std::cout << 0;
+	else std::cout << as[1];
+	for (size_t i = 2; i < as.size(); ++i) { std::cout << " + " << i*as[i] << "x^" << i-1; }
+	std::cout << "\n\n";
 
+	std::cout << "Caluculating the sum f(x_i) for x_i = 0 ... " << N << " - 1\n";
 	std::cout << std::string(60, '_') << '\n';
 	std::cout << "templated\tvirtual\t\tstd::function\tname\n";
 	std::cout << std::string(60, '_') << '\n';
