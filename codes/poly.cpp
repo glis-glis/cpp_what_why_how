@@ -76,16 +76,25 @@ int main(int argc, char *argv[]) {
 		std::cerr << "We allow at most " << TPolyStaticVector::N << " coefficient!\n";
 		return 1;
 	}
+
+	// Print polynomial and derivatives
 	std::cout << "Will use the folowing polynomial function of order " << as.size() - 1 << '\n';
-	std::cout << "    f(x) = " << as.front();
-	for (size_t i = 1; i < as.size(); ++i) { std::cout << " + " << as[i] << "x^" << i; }
-	std::cout << "\ndf/dx(x) = ";
-	if (as.size() <= 1) std::cout << 0;
-	else std::cout << as[1];
-	for (size_t i = 2; i < as.size(); ++i) { std::cout << " + " << i*as[i] << "x^" << i-1; }
+	std::vector<double> ds(as.begin(), as.end());
+	int d = 0;
+	while(ds.size() > 0) {
+		std::cout << std::string(ds.size() - 1, ' ') << 'f' << std::string(d++, '\'') << "(x) = " << ds.front();
+		for (size_t i = 1; i < ds.size(); ++i) {
+			std::cout << " + " << ds[i] << "x";
+			if (i > 1) std::cout << "^" << i;
+			ds[i] *= i;
+		}
+		std::cout << '\n';
+		ds.erase(ds.begin());
+	}
 	std::cout << "\n\n";
 
-	std::cout << "Caluculating the sum f(x_i) for x_i = 0 ... " << N << " - 1\n";
+	// Print Table
+	std::cout << "Caluculating the sum[f(x_i)] for x_i = 0 ... " << N << " - 1\n";
 	std::cout << std::string(60, '_') << '\n';
 	std::cout << "templated\tvirtual\t\tstd::function\tname\n";
 	std::cout << std::string(60, '_') << '\n';
