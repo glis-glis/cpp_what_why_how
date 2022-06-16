@@ -14,13 +14,13 @@
   (text str (current-code-font) (current-font-size)))
 
 (define (c++ str)
-  (colorize (tt str) (current-base-color)))
+  (colorize (tt str) "darkblue"))
 
 (define (kw str)
-  (colorize (tt str) (current-keyword-color)))
+  (colorize (tt str) "darkred"))
 
 (define (// str)
-  (colorize (tt str) (current-comment-color)))
+  (colorize (tt str) "darkgreen"))
 
 (define (emph str)
   (colorize (bt str) "blue"))
@@ -104,7 +104,7 @@
  (shadow-frame (big (t "Functions are unsafe by default")))
  (table 3
         (list
-         (bt "Functions mutate arguments") (ghost (arrow gap-size 0)) (ghost (t "const references"))
+         (bt "Functions mutate references") (ghost (arrow gap-size 0)) (ghost (t "const references"))
          (bt "Member-functions mutate members") (ghost (arrow gap-size 0)) (ghost (t "const"))
          (bt "Functions evaluate at run-time") (ghost (arrow gap-size 0)) (ghost (t "constexpr")))
         lc-superimpose
@@ -117,7 +117,7 @@
  (shadow-frame (big (t "Make variables safe")))
  (table 3
         (list
-         (bt "Functions mutate arguments") (arrow gap-size 0) (t "const references")
+         (bt "Functions mutate references") (arrow gap-size 0) (t "const references")
          (bt "Member-functions mutate members") (arrow gap-size 0) (t "const")
          (bt "Functions evaluate at run-time") (arrow gap-size 0) (t "constexpr"))
         lc-superimpose
@@ -148,13 +148,13 @@
  #:name "Premature Optimization"
  (shadow-frame (big (t "Premature Optimization")))
 
- (para (it "Premature optimization is the root of all evil.") "(Donald Knuth)")
+ (para (it "Premature optimization is the root of all evil.") "(Donald Knuth, 1974)")
  'next
  (blank 24)
 
- (para (bt "However"))
+ (para (emph "However"))
  (italic (para "In established engineering disciplines a 12% improvement, easily obtained, is never considered marginal; and I believe the same viewpoint should prevail in software engineering."))
-(para "(Donald Knuth)"))
+(para "(Donald Knuth," (bt " same article") ")"))
 
 (define ccc (current-comment-color))
 (current-comment-color (current-id-color)) 
@@ -213,22 +213,32 @@ a[3] = 3;")))
  )
 
 (slide
- #:name "Stack and Heap"
- (shadow-frame (big (t "Stack and Heap")))
- (para (emph "Stack memory is basically for free"))
+ #:name "Stack vs Heap"
+ (scale-to-fit (bitmap "stack_heap.png") client-w (/ client-h 1.5)))
+
+(slide
+ #:name "Call Stack"
+ (shadow-frame (big (t "Call Stack")))
+ (scale-to-fit (bitmap "stack.png") client-w (/ client-h 1.3)))
+
+(slide
+ #:name "Stack and Heap Variables"
+ (shadow-frame (big (t "Stack and Heap Variables")))
+ (para (emph "Variables on stack are basically for free"))
  (pitem "Size known at compile-time")
  (pitem "On register or L1 cache")
  (para (frame (codeblock-pict
                "double x = 4;
 std::array<double, 1024> a;
-MyClass mc; // assuming no heap-allocated member variable")))
+MyClass mc; // assuming no heap-allocated members
+            // nor virtual functions")))
  (blank 24)
- (para (emph "Heap memory is expensive"))
+ (para (emph "Variables on heap is expensive"))
  (mitem "Size unknown at compile-time")
  (mitem "Could be on RAM (cache-miss)")
  (para (frame (codeblock-pict
-               "std::vector<double> v{1., 2., 3., 4.};
-v.push_back(5.);
+               "std::vector<double> v{1., 2.};
+v.push_back(3.);
 auto unique = std::make_unique<MyClass>();
 auto shared = std::make_shared<MyClass>();"))))
 
@@ -249,7 +259,7 @@ a[3][4] = 5.;")))
 }
 std::vector<double> a2d; // 2D Matrix
 a2d.resize(10*10);
-a[index2d(3, 4)] = 5.;"))))
+a[index2d(3, 4, 10)] = 5.;"))))
 
 (slide
  #:name "Processor Pipeline"
@@ -293,104 +303,6 @@ baseLikelihoods[base.base] = eps.complement();"))))
  #:name "C++ Defaults are Unsafe"
  (bitmap "efficiency.png") )
 
-(slide
- #:name "Core Guidelines"
- (shadow-frame (big (t "C++ Core Guidelines")))
- (para "Initiated by Bjarne Stroustrup and Herb Sutter")
- (para (tt "isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"))
- (blank 24)
- (para (emph "Aims"))
- (pitem "Less error-prone and more maintainable")
- (pitem "Faster/easier initial development")
- (pitem "Zero-overhead principle")
- (pitem "Guidelines, not rules"))
-
-(slide
- #:name "Rule of Zero"
- (shadow-frame (big (t "Rule of Zero")))
- (para (emph "C.20:") " If you can avoid defining default operations, do")
- (blank 24)
- (para (frame (codeblock-pict
-               "class MyClass {
-    int _x;
-public:
-    MyClass(int x = 0) : _x(x) {}
-
-    int x() const {return _x;}
-
-    // implicitly creates:
-    // ~MyClass() = default;
-    // MyClass(const MyClass&) = default;
-    // MyClass& operator=(const MyClass&) = default;
-
-    // MyClass(MyClass&&) = default;
-    // MyClass& operator=(MyClass&&) = default;
-}"))))
-
-(slide
- #:name "Rule of Five"
- (shadow-frame (big (t "Rule of Five")))
- (para (emph "C.21:") " If you define, " (tt "=default") " or " (tt "=delete") "any copy, move, or destructor function, define, " (tt "=default") " or " (tt "=delete") "them all")
- (blank 24)
- (para (frame (codeblock-pict
-"class MyClass {
-public:
-    std::vector<int> xs;
-    virtual ~MyClass() = default;
-
-    // implicitly creates:
-    // MyClass(const MyClass&) = default;
-    // MyClass& operator=(const MyClass&) = default;
-
-    // MyClass(MyClass&&) = delete;
-    // MyClass& operator=(MyClass&&) = delete;
-}
-std::vector<MyClass> mcs; // cannot use std::vector move constructor!"))))
-
-(slide
- #:name "Rule of Five"
- (shadow-frame (big (t "Rule of Five")))
- (para (emph "C.21:") " If you define, " (tt "=default") " or " (tt "=delete") "any copy, move, or destructor function, define, " (tt "=default") " or " (tt "=delete") "them all")
- (blank 24)
- (para (frame (codeblock-pict
-"class MyClass {
-public:
-    std::vector<int> xs;
-    virtual ~MyClass() = default;
-
-    // do this:
-    MyClass(const MyClass&) = default;
-    MyClass& operator=(const MyClass&) = default;
-
-    MyClass& operator=(MyClass&&) = default;
-    MyClass(MyClass&&) = default;
-}
-std::vector<MyClass> mcs;// can use std::vector move constructor"))))
-
-(slide
- #:name "Interface or Re-Use?"
- (shadow-frame (big (t "Interface or Re-Use?")))
- (item #:bullet (emph "C.121:") "If a base class is used as an interface, make it a pure abstract class")
- (blank 24)
-
- (item #:bullet (emph "C.129:")"When designing a class hierarchy, distinguish  between implementation inheritance and interface inheritance")
- (blank 24)
-
- (item #:bullet (emph "C.133:") "Avoid protected data"))
-
-(slide
- #:name "Controversial?"
- (shadow-frame (big (t "Controversial?")))
- (item #:bullet (emph "C.4:") "Make a function a member only if it needs direct access to the representation of a class")
- (blank 24)
- (para (emph "Reason"))
- (pitem "Less coupling than with member functions")
- (pitem "Fewer functions that can cause trouble by modifying object state")
- (pitem "Reduces the number of functions that needs to be modified after a change in representation")
- (blank 24)
- (para (emph "Problem")
- (mitem "How to know the function exists?")
- (mitem "No auto-complete")))
 
 (slide
  #:name "Programming in C++"

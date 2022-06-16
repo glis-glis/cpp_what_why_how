@@ -110,11 +110,6 @@ int main() {
 	}
 
 	return 0;
-
-	int myNumber;
-	std::cin >> myNumber;
-	int secretNumber = 3;
-	if (secretNumber = myNumber) printSecretInformation();
 }
 
 
