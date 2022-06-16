@@ -316,7 +316,3 @@ baseLikelihoods[base.base] = eps.complement();"))))
  (pitem "Safety through modern features")
  (pitem "Be aware of performance costs")
  (pitem "Use available tools and ressources"))
-
-(slide
- #:name "Compiling"
- (scale-to-fit (bitmap "high_energy_biology.png") (/ client-w 1.2) client-h))
