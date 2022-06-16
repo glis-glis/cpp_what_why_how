@@ -3,6 +3,7 @@
 
 #include <array>
 #include <vector>
+#include <functional>
 #include "TFunction.h"
 
 template<size_t Order> class TPolyArray : public TFunction {
@@ -26,14 +27,28 @@ public:
 	static constexpr const char *const name = "TPolyArray";
 };
 
-template<size_t Order = 12> constexpr TFunction *makePoly(std::vector<double> &Coeffs) {
+template<size_t Order = 12> constexpr TFunction *makePolyArray(std::vector<double> &Coeffs) {
 	if (Coeffs.size() > Order) throw "Unhappy!";
 	if (Coeffs.size() == Order)
 		return new TPolyArray<Order>(Coeffs);
 	else
-		return makePoly<Order - 1>(Coeffs);
+		return makePolyArray<Order - 1>(Coeffs);
 }
-template<> inline TFunction *makePoly<0>(std::vector<double> &Coeffs) {
+template<> inline TFunction *makePolyArray<0>(std::vector<double> &Coeffs) {
+	throw "Unhappy!";
+}
+
+template<size_t Order = 12> 
+std::function<double(double)> makePolyArrayFn(std::vector<double> &Coeffs) {
+	if (Coeffs.size() > Order) throw "Unhappy!";
+	if (Coeffs.size() == Order)
+		return TPolyArray<Order>(Coeffs);
+	else
+		return makePolyArrayFn<Order - 1>(Coeffs);
+}
+
+template<> 
+inline std::function<double(double)> makePolyArrayFn<0>(std::vector<double> &Coeffs) {
 	throw "Unhappy!";
 }
 

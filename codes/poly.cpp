@@ -1,24 +1,23 @@
 #include <algorithm>
 #include <array>
 #include <chrono>
-#include <cmath>
 #include <iostream>
 #include <memory>
 #include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <algorithm>
+#include <functional>
 
 #include "TFunction.h"
-#include "TPolyNaive.h"
-#include "TPolyBetter.h"
-#include "TPolyVector.h"
-#include "TPolyStaticVector.h"
 #include "TPolyArray.h"
+#include "TPolyBetter.h"
+#include "TPolyNaive.h"
+#include "TPolyStaticVector.h"
+#include "TPolyVector.h"
 
 constexpr size_t N = 10'000'000;
-template<class Poly> double measureTemplate(const Poly &p) {
+template<class Poly> auto measureTemplate(const Poly &p) {
 	using namespace std::chrono;
 
 	std::vector<double> xs(N);
@@ -29,11 +28,10 @@ template<class Poly> double measureTemplate(const Poly &p) {
 	const double result = std::accumulate(xs.begin(), xs.end(), 0., [&p](auto tot, auto v) { return tot + p(v); });
 
 	const duration<double> dt = high_resolution_clock::now() - start;
-	std::cout << dt.count() << "s\t" << p.getName() << '\n';
-	return result;
+	return std::make_pair(result, dt.count());
 }
 
-double measureVirtual(const TFunction &p) {
+auto measureVirtual(const TFunction &f) {
 	using namespace std::chrono;
 
 	std::vector<double> xs(N);
@@ -41,57 +39,124 @@ double measureVirtual(const TFunction &p) {
 
 	const auto start = std::chrono::high_resolution_clock::now();
 
-	const double result = std::accumulate(xs.begin(), xs.end(), 0., [&p](auto tot, auto v) { return tot + p(v); });
+	const double result = std::accumulate(xs.begin(), xs.end(), 0., [&f](auto tot, auto v) { return tot + f(v); });
 
 	const duration<double> dt = high_resolution_clock::now() - start;
-	std::cout << dt.count() << "s\t" << p.getName() << '\n';
-	return result;
+	return std::make_pair(result, dt.count());
 }
 
-int main() {
-	std::cout << "Please enter the polynomial coefficients a_i: a0 + a1*x + a2*x^2 + ...:\n";
-	std::string line;
-	std::getline(std::cin, line);
-	std::istringstream iss(line);
+auto measureFunction(std::function<double(double)> sf) {
+	using namespace std::chrono;
+
+	std::vector<double> xs(N);
+	std::iota(xs.begin(), xs.end(), 0.);
+
+	const auto start = std::chrono::high_resolution_clock::now();
+
+	const double result = std::accumulate(xs.begin(), xs.end(), 0., [sf](auto tot, auto v) { return tot + sf(v); });
+
+	const duration<double> dt = high_resolution_clock::now() - start;
+	return std::make_pair(result, dt.count());
+}
+
+int main(int argc, char *argv[]) {
 	std::vector<double> as;
-	double a;
-	while (iss >> a) { as.push_back(a); }
-	if (as.empty()) {
-		std::cerr << "We need at least one coefficient!\n";
-		return 1;
-	};
-	std::cout << "Will use polynomial of order " << as.size() - 1 << '\n';
-	const auto pn  = TPolyNaive{as};
-	const auto pu  = TPolyBetter{as};
-	const auto pv  = TPolyVector{as};
-	const auto pan = TPolyStaticVector{as};
-	std::unique_ptr<TFunction> pa{makePoly(as)};
-
-	std::cout << "Measuring templated function\n";
-	std::array<double, 5> rs;
-	rs[0] = measureTemplate(pn);
-	rs[1] = measureTemplate(pu);
-	rs[2] = measureTemplate(pv);
-	rs[3] = measureTemplate(pan);
-	rs[4] = measureTemplate(*pa);
-
-	if (!std::equal(rs.begin(), rs.end(), rs.begin())) {
-		std::cerr << "Polynomials are not creating same values!\n";
-		return 1;
-		
+	if (argc <= 1) {
+		as = {1., 2., 3., 4};
 	}
-	std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
-	std::cout << "Measuring virtual function\n";
-	rs[0] = measureVirtual(pn);
-	rs[1] = measureVirtual(pu);
-	rs[2] = measureVirtual(pv);
-	rs[3] = measureVirtual(pan);
-	rs[4] = measureVirtual(*pa);
+	for (size_t i = 1; i < argc; ++i) {
+		try {
+			as.push_back(std::stof(argv[i]));
+		} catch (std::invalid_argument const &ex) {
+			std::cerr << "Cannot convert " << i << "° argument '" << argv[i] << "' to floating point\n";
+			return 1;
+		}
+	}
+	if (as.size() > TPolyStaticVector::N) {
+		std::cerr << "We allow at most " << TPolyStaticVector::N << " coefficient!\n";
+		return 1;
+	}
+	std::cout << "Will use the folowing polynomial function of order " << as.size() - 1 << '\n';
+	std::cout << "f(x) = " << as.front();
+	for (size_t i = 1; i < as.size(); ++i) { std::cout << " + " << as[i] << "x^" << i; }
+	std::cout << '\n';
 
-	if (!std::equal(rs.begin(), rs.end(), rs.begin())) {
+	std::cout << std::string(60, '_') << '\n';
+	std::cout << "templated\tvirtual\t\tstd::function\tname\n";
+	std::cout << std::string(60, '_') << '\n';
+
+	// Naive
+	const auto pNaive   = TPolyNaive{as};
+	std::function<double(double)> fnNaive  = TPolyNaive{as};
+
+	const auto tNaive = measureTemplate(pNaive);  
+	std::cout << tNaive.second << "s\t" << std::flush;
+	const auto vNaive = measureVirtual(pNaive);  
+	std::cout << vNaive.second << "s\t" << std::flush;
+	const auto fNaive = measureFunction(fnNaive);
+	std::cout << fNaive.second << "s\t" << pNaive.getName() << '\n';
+
+	// Better
+	const auto pBetter   = TPolyBetter{as};
+	std::function<double(double)> fnBetter  = TPolyBetter{as};
+
+	const auto tBetter = measureTemplate(pBetter);  
+	const auto vBetter = measureVirtual(pBetter);  
+	const auto fBetter = measureFunction(fnBetter);  
+	std::cout << tBetter.second << "s\t" << vBetter.second << "s\t" << fBetter.second << "s\t" << pBetter.getName() << '\n';
+
+	// Vector
+	const auto pVector   = TPolyVector{as};
+	std::function<double(double)> fnVector  = TPolyVector{as};
+
+	const auto tVector = measureTemplate(pVector);  
+	const auto vVector = measureVirtual(pVector);  
+	const auto fVector = measureFunction(fnVector);  
+	std::cout << tVector.second << "s\t" << vVector.second << "s\t" << fVector.second << "s\t" << pVector.getName() << '\n';
+
+	// StaticVector
+	const auto pStaticVector   = TPolyStaticVector{as};
+	std::function<double(double)> fnStaticVector  = TPolyStaticVector{as};
+
+	const auto tStaticVector = measureTemplate(pStaticVector);  
+	const auto vStaticVector = measureVirtual(pStaticVector);  
+	const auto fStaticVector = measureFunction(fnStaticVector);  
+	std::cout << tStaticVector.second << "s\t" << vStaticVector.second << "s\t" << fStaticVector.second << "s\t" << pStaticVector.getName() << '\n';
+
+	// Array
+	std::unique_ptr<TFunction> unique{makePolyArray(as)};
+	const auto &pArray = *unique.get();
+	std::function<double(double)> fnArray  = makePolyArrayFn(as);
+
+	const auto tArray = measureTemplate(pArray);  
+	const auto vArray = measureVirtual(pArray);  
+	const auto fArray = measureFunction(fnArray);  
+
+	std::cout << tArray.second << "s\t" << vArray.second << "s\t" << fArray.second << "s\t" << pArray.getName() << '\n';
+	std::cout << std::string(60, '_') << '\n';
+
+	std::vector<double> results;
+	results.reserve(16);
+	results.push_back(tNaive.first);
+	results.push_back(vNaive.first);
+	results.push_back(fNaive.first);
+	results.push_back(tBetter.first);
+	results.push_back(vBetter.first);
+	results.push_back(fBetter.first);
+	results.push_back(tVector.first);
+	results.push_back(vVector.first);
+	results.push_back(fVector.first);
+	results.push_back(tStaticVector.first);
+	results.push_back(vStaticVector.first);
+	results.push_back(fStaticVector.first);
+	results.push_back(tArray.first);
+	results.push_back(vArray.first);
+	results.push_back(fArray.first);
+
+
+	if (!std::equal(results.begin(), results.end(), results.begin())) {
 		std::cerr << "Polynomials are not creating same values!\n";
 		return 1;
-		
 	}
 
 	return 0;

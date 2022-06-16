@@ -6,17 +6,18 @@
 #include "TFunction.h"
 
 class TPolyStaticVector : public TFunction {
+public:
 	static constexpr size_t N = 12;
+private:
 	std::array<double, N> _coeffs;
 	size_t _size;
-
 public:
 	TPolyStaticVector(std::vector<double> Coeffs) : _size(Coeffs.size()) {
 		if (Coeffs.size() > _coeffs.size()) throw "Unhappy!";
 		std::copy(Coeffs.begin(), Coeffs.end(), _coeffs.begin());
 	}
 
-	double operator()(double x) const {
+	double operator()(double x) const override {
 		double r   = _coeffs.front();
 		double xpi = 1.;
 		for (size_t i = 1; i < _size; ++i) {
@@ -26,7 +27,7 @@ public:
 		return r;
 	}
 
-	std::string getName() const { return name; }
+	std::string getName() const override { return name; }
 
 	static constexpr const char *const name = "TPolyStaticVector";
 };
