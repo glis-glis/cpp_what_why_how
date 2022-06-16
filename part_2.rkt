@@ -8,19 +8,9 @@
 (require slideshow/code)
 (require pict/shadow)
 (require slideshow/text)
-(require (planet jaymccarthy/c:1:2))
 
 (define (tt str)
   (text str (current-code-font) (current-font-size)))
-
-(define (c++ str)
-  (colorize (tt str) "darkblue"))
-
-(define (kw str)
-  (colorize (tt str) "darkred"))
-
-(define (// str)
-  (colorize (tt str) "darkgreen"))
 
 (define (emph str)
   (colorize (bt str) "blue"))
@@ -234,7 +224,7 @@ MyClass mc; // assuming no heap-allocated members
             // nor virtual functions")))
  (blank 24)
  (para (emph "Variables on heap is expensive"))
- (mitem "Size unknown at compile-time")
+ (mitem "Allocation and deallocation costs")
  (mitem "Could be on RAM (cache-miss)")
  (para (frame (codeblock-pict
                "std::vector<double> v{1., 2.};
@@ -277,7 +267,7 @@ a[index2d(3, 4, 10)] = 5.;"))))
     if (other == base.base)
         baseLikelihoods[other] = eps.complement();
     else
-        baseLikelihoods[other] = (1. / 3) * eps;
+        baseLikelihoods[other] = (1./3) * eps;
 }")))
  'next
  (blank 24)
@@ -300,9 +290,13 @@ baseLikelihoods[base.base] = eps.complement();"))))
  (pitem "Avoid branching"))
 
 (slide
- #:name "C++ Defaults are Unsafe"
- (bitmap "efficiency.png") )
+ #:name "Live C++ Example"
+ (shadow-frame (big (t "Live C++ Example")))
+ (tt "poly.cpp"))
 
+(slide
+ #:name "Comix"
+ (bitmap "efficiency.png") )
 
 (slide
  #:name "Programming in C++"
@@ -315,4 +309,4 @@ baseLikelihoods[base.base] = eps.complement();"))))
  (para (emph "How"))
  (pitem "Safety through modern features")
  (pitem "Be aware of performance costs")
- (pitem "Use available tools and ressources"))
+ (pitem "Use available tools and resources"))
