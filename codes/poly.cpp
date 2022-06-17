@@ -16,7 +16,7 @@
 #include "TPolyStaticVector.h"
 #include "TPolyVector.h"
 
-constexpr size_t N = 10'000'000;
+constexpr double N = 1e7;
 template<class Poly> auto measureTemplate(const Poly &p) {
 	using namespace std::chrono;
 
