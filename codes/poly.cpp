@@ -20,40 +20,36 @@ constexpr size_t N = 10'000'000;
 template<class Poly> auto measureTemplate(const Poly &p) {
 	using namespace std::chrono;
 
-	std::vector<double> xs(N);
-	std::iota(xs.begin(), xs.end(), 0.);
+	const auto start = high_resolution_clock::now();
 
-	const auto start = std::chrono::high_resolution_clock::now();
-
-	const double result = std::accumulate(xs.begin(), xs.end(), 0., [&p](auto tot, auto v) { return tot + p(v); });
+	double result = 0.;
+	for (double d = 0.; d < N; ++d) result += p(d);
 
 	const duration<double> dt = high_resolution_clock::now() - start;
+
 	return std::make_pair(result, dt.count());
 }
 
 auto measureVirtual(const TFunction &f) {
 	using namespace std::chrono;
 
-	std::vector<double> xs(N);
-	std::iota(xs.begin(), xs.end(), 0.);
+	const auto start = high_resolution_clock::now();
 
-	const auto start = std::chrono::high_resolution_clock::now();
-
-	const double result = std::accumulate(xs.begin(), xs.end(), 0., [&f](auto tot, auto v) { return tot + f(v); });
+	double result = 0.;
+	for (double d = 0.; d < N; ++d) result += f(d);
 
 	const duration<double> dt = high_resolution_clock::now() - start;
+
 	return std::make_pair(result, dt.count());
 }
 
 auto measureFunction(std::function<double(double)> sf) {
 	using namespace std::chrono;
 
-	std::vector<double> xs(N);
-	std::iota(xs.begin(), xs.end(), 0.);
+	const auto start = high_resolution_clock::now();
 
-	const auto start = std::chrono::high_resolution_clock::now();
-
-	const double result = std::accumulate(xs.begin(), xs.end(), 0., [sf](auto tot, auto v) { return tot + sf(v); });
+	double result = 0.;
+	for (double d = 0.; d < N; ++d) result += sf(d);
 
 	const duration<double> dt = high_resolution_clock::now() - start;
 	return std::make_pair(result, dt.count());
