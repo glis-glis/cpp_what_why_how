@@ -1,0 +1,5 @@
+* C++, Why and How
+
+This is a two-part introduction to C++ I gave at our lab. The
+presentations [[part_1.pdf]] and [[part_2.pdf]] are done with Racket Slideshow
+[[https://docs.racket-lang.org/slideshow/]]. Code examples are in the [[codes]] folder.
